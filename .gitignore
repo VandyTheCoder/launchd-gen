@@ -1,0 +1,14 @@
+# Go build output
+/launchd-gen
+*.exe
+*.test
+*.out
+
+# GoReleaser
+/dist/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
