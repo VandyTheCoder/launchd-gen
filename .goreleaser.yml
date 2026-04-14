@@ -56,6 +56,11 @@ homebrew_casks:
       owner: VandyTheCoder
       name: homebrew-tools
       branch: main
+      # Use the dedicated tap PAT, not the workflow's GITHUB_TOKEN (which only
+      # has access to this repo, not to homebrew-tools). Without this override
+      # GoReleaser defaults to GITHUB_TOKEN and the cross-repo push 403s with
+      # "Resource not accessible by integration".
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     directory: Casks
     homepage: "https://github.com/VandyTheCoder/launchd-gen"
     description: "Convert cron expressions into macOS launchd plists"
