@@ -6,7 +6,7 @@
 #   2. git push --tags
 #   3. GitHub Actions runs `goreleaser release --clean`
 #   4. Binaries are published to the GitHub Release
-#   5. The Homebrew formula in VandyTheCoder/homebrew-tools is auto-updated
+#   5. The Homebrew cask in VandyTheCoder/homebrew-tools is auto-updated
 
 version: 2
 
@@ -31,7 +31,7 @@ builds:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
 
 archives:
-  - format: tar.gz
+  - formats: ["tar.gz"]
     name_template: >-
       {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
 
@@ -46,17 +46,28 @@ changelog:
       - "^test:"
       - "^chore:"
 
-brews:
+# Homebrew cask (Homebrew now prefers casks for pre-built binaries over formulas).
+# Users will install via:
+#   brew tap VandyTheCoder/tools
+#   brew install --cask launchd-gen
+homebrew_casks:
   - name: launchd-gen
     repository:
       owner: VandyTheCoder
       name: homebrew-tools
       branch: main
-    directory: Formula
+    directory: Casks
     homepage: "https://github.com/VandyTheCoder/launchd-gen"
     description: "Convert cron expressions into macOS launchd plists"
-    license: "MIT"
-    test: |
-      system "#{bin}/launchd-gen", "--help"
-    install: |
-      bin.install "launchd-gen"
+    binaries:
+      - launchd-gen
+    url:
+      verified: "github.com/VandyTheCoder/launchd-gen"
+    # The binary is unsigned. Remove the macOS quarantine xattr after install
+    # so Gatekeeper doesn't block first-run. Replace with code signing later.
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/launchd-gen"]
+          end

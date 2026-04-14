@@ -24,7 +24,7 @@ $ launchd-gen --label com.me.daily "0 9 * * 1-5" /usr/bin/python3 script.py
 
 ```bash
 brew tap VandyTheCoder/tools
-brew install launchd-gen
+brew install --cask launchd-gen
 ```
 
 ### Go
